@@ -11,13 +11,10 @@
 </p>
 
 <p>
-  <strong>Password:</strong>
-  <%= @server.password %>
-</p>
-
-<p>
-  <strong>Admin password:</strong>
-  <%= @server.admin_password %>
+    <strong>IP Addresses:</strong>
+    <% for u in @server.updates.sort_by{|u| u.created_at}.reverse -%>
+        <li><strong><%= u.ip_address %></strong> at <%= u.created_at %></li>
+    <% end -%>
 </p>
 
 <%= link_to 'Edit', edit_server_path(@server) %> |
