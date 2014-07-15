@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dynipo</title>
+  <title><%= @page_title or 'Dynipo' %></title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
@@ -9,9 +9,20 @@
 <body>
 
 <div class="container">
-
-<%= yield %>
-
+	<!-- Header -->
+	<div class="row-fluid header">
+		<%= render :partial => 'layouts/header' %>
+	</div>
+	<!-- Flash -->
+	<div class="row-fluid">
+		<div class="span6 offset3">
+			<%= bootstrap_flash %>
+		</div>
+	</div>
+	<!-- Content -->
+	<div class="row-fluid">
+		<%= yield %>
+	</div>
 </div>
 
 </body>

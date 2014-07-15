@@ -1,6 +1,12 @@
-<h1>Editing server</h1>
+<% @page_title = 'Editing server' -%>
 
-<%= render 'form' %>
+<div class="span6 offset3">
+	<div class="well">
 
-<%= link_to 'Show', @server %> |
-<%= link_to 'Back', servers_path %>
+		<%= render 'form' %>
+
+		<%= link_to 'Show', @server %> |
+		<%= link_to 'Back', servers_path %>
+
+	</div>
+</div>

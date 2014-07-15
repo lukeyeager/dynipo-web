@@ -1,11 +1,17 @@
-<h1>Dynipo</h1>
+<% @page_title = 'Dynamic IP Otter' -%>
 
-<%= form_tag '/server' do |f| -%>
-	<%= label_tag :name %>
-	<%= text_field_tag :name %>
-	<br>
-	<%= label_tag :password %>
-	<%= text_field_tag :password %>
-	<br>
-	<%= submit_tag 'View' %>
-<% end -%>
+<div class="span4 offset4">
+	<div class="well">
+
+		<%= form_tag '/server' do |f| -%>
+			<%= label_tag :name, 'Server Name' %>
+			<%= text_field_tag :name %>
+			<br>
+			<%= label_tag :password %>
+			<%= text_field_tag :password %>
+			<br>
+			<%= submit_tag 'View' %>
+		<% end -%>
+
+	</div>
+</div>

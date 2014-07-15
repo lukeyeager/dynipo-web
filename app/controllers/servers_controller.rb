@@ -87,12 +87,12 @@ class ServersController < ApplicationController
 
 		# Require password = server.password
     def require_password
-			@authorized = params[:password] and params[:password] == @server.password
+			@authorized = (params[:password] and params[:password] == @server.password)
 		end
 
 		# Require password = server.admin_password
     def require_admin_password
-			@authorized = params[:password] and params[:password] == @server.admin_password
+			#@authorized = (params[:password] and params[:password] == @server.admin_password)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
