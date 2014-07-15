@@ -1,16 +1,33 @@
 class ServersController < ApplicationController
   before_action :set_server, only: [:show, :edit, :update, :destroy]
+  before_action :require_password, only: [:show]
+  before_action :require_admin_password, only: [:edit, :update, :destroy]
 
-  # GET /servers
-  # GET /servers.json
+	# /
+	def home
+		@server = Server.new
+	end
+
+  # /servers
   def index
-    @servers = Server.all
+		@servers = Server.all
   end
 
-  # GET /servers/1
-  # GET /servers/1.json
+  # /servers/1
+	# /server/name
   def show
+		unless @server
+			respond_to do |format|
+				format.html {redirect_to root_url, error: 'Server not found'}
+				format.json {render json: 'Server not found', status: :not_found}
+			end
+			return
+		end
   end
+
+	# /update
+	def update_ip
+	end
 
   # GET /servers/new
   def new
@@ -64,7 +81,18 @@ class ServersController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_server
-      @server = Server.find(params[:id])
+			@server = Server.find_by_id(params[:id]) if params[:id] and !params[:id].blank?
+			@server = Server.find_by_name(params[:name]) if @server.nil? and params[:name] and !params[:name].blank?
+    end
+
+		# Require password = server.password
+    def require_password
+			@authorized = params[:password] and params[:password] == @server.password
+		end
+
+		# Require password = server.admin_password
+    def require_admin_password
+			@authorized = params[:password] and params[:password] == @server.admin_password
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

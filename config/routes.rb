@@ -1,8 +1,15 @@
 Rails.application.routes.draw do
 
-    root 'servers#index'
+	root 'servers#home'
 
-    resources :servers
+	resources :servers
+
+	get 'server' => 'servers#show'
+	post 'server' => 'servers#show'
+	get 'server/:name' => 'servers#show'
+	post 'server/:name' => 'servers#show'
+
+	post 'update' => 'servers#update_ip'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

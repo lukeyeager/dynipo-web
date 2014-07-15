@@ -1,8 +1,17 @@
-<p id="notice"><%= notice %></p>
+<% if @server and !@authorized -%>
+
+<%= form_tag "/server/#{@server.name}" do |f| -%>
+	<%= label_tag :password %>
+	<%= text_field_tag :password %>
+	<br>
+	<%= submit_tag 'View' %>
+<% end -%>
+
+<% else -%>
 
 <p>
   <strong>Name:</strong>
-  <%= @server.name %>
+  <%= link_to @server.name, "/server/#{@server.name}?password=#{@server.password}" %>
 </p>
 
 <p>
@@ -17,5 +26,6 @@
     <% end -%>
 </p>
 
-<%= link_to 'Edit', edit_server_path(@server) %> |
-<%= link_to 'Back', servers_path %>
+<%= link_to 'Edit', edit_server_path(@server) %>
+
+<% end -%>
