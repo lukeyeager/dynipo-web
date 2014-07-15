@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 	get 'server/:name' => 'servers#show'
 	post 'server/:name' => 'servers#show'
 
+	get 'update' => 'servers#update_ip'
 	post 'update' => 'servers#update_ip'
 
   # The priority is based upon order of creation: first created -> highest priority.

@@ -1,7 +1,7 @@
 class ServersController < ApplicationController
-  before_action :set_server, only: [:show, :edit, :update, :destroy]
+  before_action :set_server, only: [:show, :edit, :update, :destroy, :update_ip]
   before_action :require_password, only: [:show]
-  before_action :require_admin_password, only: [:edit, :update, :destroy]
+  before_action :require_admin_password, only: [:edit, :update, :destroy, :update_ip]
 
 	# /
 	def home
@@ -25,8 +25,24 @@ class ServersController < ApplicationController
 		end
   end
 
-	# /update
+	# /update.json
 	def update_ip
+		unless @server
+			render json: 'Server not found', status: :not_found
+			return
+		end
+		unless @authorized
+			render json: 'Incorrect server/password combination', status: :not_authorized
+			return
+		end
+
+		u = @server.updates.build(:ip_address => request.remote_ip)
+		if u.save
+			render json: 'yes'
+		else
+			render json: 'no'
+		end
+		return
 	end
 
   # GET /servers/new
@@ -92,7 +108,7 @@ class ServersController < ApplicationController
 
 		# Require password = server.admin_password
     def require_admin_password
-			#@authorized = (params[:password] and params[:password] == @server.admin_password)
+			@authorized = (params[:password] and params[:password] == @server.admin_password)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
