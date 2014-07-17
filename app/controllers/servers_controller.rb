@@ -1,118 +1,118 @@
 class ServersController < ApplicationController
-  before_action :set_server, only: [:show, :edit, :update, :destroy, :update_ip]
-  before_action :require_password, only: [:show]
-  before_action :require_admin_password, only: [:edit, :update, :destroy, :update_ip]
 
 	# /
 	def home
-		@server = Server.new
 	end
 
-  # /servers
-  def index
+	# /servers
+	def index
 		@servers = Server.all
-  end
+	end
 
-  # /servers/1
+	# /servers/1
 	# /server/name
-  def show
-		unless @server
+	# /server/name.json
+	def show
+		unless set_server
 			respond_to do |format|
-				format.html {redirect_to root_url, error: 'Server not found'}
+				format.html {redirect_to root_url, :flash => { :error => 'Server not found' } }
 				format.json {render json: 'Server not found', status: :not_found}
 			end
 			return
 		end
-  end
+		@authorized = require_password
+	end
 
 	# /update.json
 	def update_ip
-		unless @server
-			render json: 'Server not found', status: :not_found
+		unless set_server
+			render json: {error: 'Server not found'}, status: :not_found
 			return
 		end
-		unless @authorized
-			render json: 'Incorrect server/password combination', status: :not_authorized
+		unless require_admin_password
+			render json: {error: 'Incorrect server/password combination'}, status: :not_authorized
 			return
 		end
 
 		u = @server.updates.build(:ip_address => request.remote_ip)
 		if u.save
-			render json: 'yes'
+			render json: 'succeeded'
 		else
-			render json: 'no'
+			render json: @server.errors, status: :bad_request
 		end
 		return
 	end
 
-  # GET /servers/new
-  def new
-    @server = Server.new
-  end
+	# GET /servers/new
+	def new
+		@server = Server.new
+	end
 
-  # GET /servers/1/edit
-  def edit
-  end
+	# POST /servers
+	def create
+		@server = Server.new(server_params)
 
-  # POST /servers
-  # POST /servers.json
-  def create
-    @server = Server.new(server_params)
+		if @server.save
+			redirect_to "/server/#{@server.name}?password=#{@server.password}", notice: 'Server was successfully created.'
+		else
+			render :new
+		end
+	end
 
-    respond_to do |format|
-      if @server.save
-        format.html { redirect_to @server, notice: 'Server was successfully created.' }
-        format.json { render :show, status: :created, location: @server }
-      else
-        format.html { render :new }
-        format.json { render json: @server.errors, status: :unprocessable_entity }
-      end
-    end
-  end
+	# GET /servers/1/edit
+	def edit
+		unless set_server
+			redirect_to :index, error: 'Server not found.'
+		end
+		@authorized = require_admin_password
+	end
 
-  # PATCH/PUT /servers/1
-  # PATCH/PUT /servers/1.json
-  def update
-    respond_to do |format|
-      if @server.update(server_params)
-        format.html { redirect_to @server, notice: 'Server was successfully updated.' }
-        format.json { render :show, status: :ok, location: @server }
-      else
-        format.html { render :edit }
-        format.json { render json: @server.errors, status: :unprocessable_entity }
-      end
-    end
-  end
+	# PATCH/PUT /servers/1
+	def update
+		unless set_server
+			redirect_to :index, error: 'Server not found.'
+		end
+		unless require_admin_password
+			redirect_to :index, error: 'Password required.'
+		end
+		if @server.update(server_params)
+			redirect_to @server, notice: 'Server was successfully updated.'
+		else
+			render :edit
+		end
+	end
 
-  # DELETE /servers/1
-  # DELETE /servers/1.json
-  def destroy
-    @server.destroy
-    respond_to do |format|
-      format.html { redirect_to servers_url, notice: 'Server was successfully destroyed.' }
-      format.json { head :no_content }
-    end
-  end
+	# DELETE /servers/1
+	def destroy
+		unless set_server
+			redirect_to action: :index, :flash => {error: 'Server not found.'}
+		end
+		unless require_admin_password
+			redirect_to action: :index, :flash => {error: 'Password required.'}
+		end
+		@server.destroy
+		redirect_to servers_url, notice: 'Server was successfully destroyed.'
+	end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_server
+	private
+		def set_server
 			@server = Server.find_by_id(params[:id]) if params[:id] and !params[:id].blank?
 			@server = Server.find_by_name(params[:name]) if @server.nil? and params[:name] and !params[:name].blank?
-    end
+			return !@server.nil?
+		end
 
 		# Require password = server.password
-    def require_password
-			@authorized = (params[:password] and params[:password] == @server.password)
+		def require_password
+			return (params[:password] and params[:password] == @server.password)
 		end
 
 		# Require password = server.admin_password
-    def require_admin_password
-			@authorized = (params[:password] and params[:password] == @server.admin_password)
-    end
+		def require_admin_password
+			return (params[:password] and params[:password] == @server.admin_password)
+		end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def server_params
-      params.require(:server).permit(:name, :description, :password, :admin_password)
-    end
+		# Never trust parameters from the scary internet, only allow the white list through.
+		def server_params
+			params.require(:server).permit(:name, :description, :password, :admin_password)
+		end
 end

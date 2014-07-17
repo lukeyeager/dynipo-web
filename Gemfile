@@ -17,7 +17,7 @@ gem 'jbuilder', '~> 2.0'
 #gem 'spring',        group: :development
 
 
-gem 'twitter-bootstrap-rails'
+gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
 
 # For Heroku:
 gem 'unicorn', group: :production
