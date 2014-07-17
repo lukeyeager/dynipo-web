@@ -1,0 +1,28 @@
+<% @page_title = 'Deleting server' -%>
+
+<div class="span6 offset3">
+	<div class="well">
+
+	<%= form_tag request.original_url, method: :delete, class: 'form-horizontal' do |f| -%>
+		<div class="control-group">
+			<%= label_tag :name, 'Server Name', class: 'control-label' %>
+			<div class="controls">
+				<%= text_field_tag nil, @server.name, disabled: true %>
+			</div>
+		</div>
+		<div class="control-group">
+			<%= label_tag :password, 'Admin password', class: 'control-label' %>
+			<div class="controls">
+				<%= text_field_tag :password %>
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<%= submit_tag 'Delete', name: nil, class: 'btn btn-primary' %>
+				<%= link_to 'Back', "/server/#{@server.name}?password=#{@server.password}" %>
+			</div>
+		</div>
+	<% end -%>
+
+	</div>
+</div>

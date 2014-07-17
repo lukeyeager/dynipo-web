@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-	root 'servers#home'
+	root 'servers#index'
 
 	resources :servers
 

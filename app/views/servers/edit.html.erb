@@ -3,10 +3,71 @@
 <div class="span6 offset3">
 	<div class="well">
 
-		<%= render 'form' %>
+<% if !@authorized -%>
 
-		<%= link_to 'Show', @server %> |
-		<%= link_to 'Back', servers_path %>
+	<%= form_tag request.original_url, method: :get, class: 'form-horizontal' do |f| -%>
+		<div class="control-group">
+			<%= label_tag :name, 'Server Name', class: 'control-label' %>
+			<div class="controls">
+				<%= text_field_tag nil, @server.name, disabled: true %>
+			</div>
+		</div>
+		<div class="control-group">
+			<%= label_tag :password, 'Admin password', class: 'control-label' %>
+			<div class="controls">
+				<%= text_field_tag :password %>
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<%= submit_tag 'Edit', name: nil, class: 'btn btn-primary' %>
+				<%= link_to 'Back', "/server/#{@server.name}?password=#{@server.password}" %>
+			</div>
+		</div>
+	<% end -%>
+
+<% else -%>
+	<%# Authorized -%>
+
+		<%= form_for @server, :html => {class: 'form-horizontal'} do |f| %>
+			<%= hidden_field_tag :password, @server.admin_password %>
+			<% if @server.errors.any? %>
+				<div id="error_explanation">
+					<h2><%= pluralize(@server.errors.count, "error") %> prohibited this server from being saved:</h2>
+
+					<ul>
+					<% @server.errors.full_messages.each do |message| %>
+						<li><%= message %></li>
+					<% end %>
+					</ul>
+				</div>
+			<% end %>
+
+			<div class="control-group">
+				<%= f.label :name, class: 'control-label' %>
+				<div class="controls"><%= f.text_field :name %></div>
+			</div>
+			<div class="control-group">
+				<%= f.label :description, class: 'control-label' %>
+				<div class="controls"><%= f.text_field :description %></div>
+			</div>
+			<div class="control-group">
+				<%= f.label :password, class: 'control-label' %>
+				<div class="controls"><%= f.text_field :password %></div>
+			</div>
+			<div class="control-group">
+				<%= f.label :admin_password, class: 'control-label' %>
+				<div class="controls"><%= f.text_field :admin_password %></div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+					<%= f.submit 'Update', class: 'btn btn-primary' %>
+					<%= link_to 'Show', "/server/#{@server.name}?password=#{@server.password}" %>
+				</div>
+			</div>
+		<% end %>
+
+<% end -%>
 
 	</div>
 </div>

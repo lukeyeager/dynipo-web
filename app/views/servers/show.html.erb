@@ -3,40 +3,19 @@
 <div class="span6 offset3">
 	<div class="well">
 
-		<% if @server and !@authorized -%>
-			<%# Unauthorized -%>
+		<h2><%= @server.name %></h2>
+		<% unless @server.description.nil? or @server.description.blank? -%>
+			<blockquote><%= @server.description %></blockquote>
+		<% end -%>
 
-			<%= form_tag "/server/#{@server.name}" do |f| -%>
-				<%= label_tag :password %>
-				<%= text_field_tag :password %>
-				<br>
-				<%= submit_tag 'View' %>
-			<% end -%>
+		<p>
+			<%= link_to 'Edit', edit_server_path(@server) %> |
+       <%= link_to 'Destroy', @server, method: :delete %>
+		</p>
 
-		<% else -%>
-			<%# Authorized -%>
-
-			<p>
-				<strong>Name:</strong>
-				<%= link_to @server.name, "/server/#{@server.name}?password=#{@server.password}" %>
-			</p>
-
-			<% unless @server.description.nil? or @server.description.blank? -%>
-				<p>
-					<strong>Description:</strong>
-					<%= @server.description %>
-				</p>
-			<% end -%>
-
-			<p>
-				<strong>IP Addresses:</strong>
-				<% for u in @server.updates.sort_by{|u| u.created_at}.reverse -%>
-					<li><strong><%= u.ip_address %></strong> at <%= u.created_at %></li>
-				<% end -%>
-			</p>
-
-			<%= link_to 'Edit', edit_server_path(@server) %>
-
+		<strong>IP Addresses:</strong>
+		<% for u in @server.updates.sort_by{|u| u.created_at}.reverse -%>
+			<li><strong><%= u.ip_address %></strong> at <%= u.created_at %></li>
 		<% end -%>
 
 	</div>

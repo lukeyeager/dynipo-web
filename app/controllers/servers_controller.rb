@@ -6,7 +6,7 @@ class ServersController < ApplicationController
 
 	# /servers
 	def index
-		@servers = Server.all
+		@servers = Server.order(:name)
 	end
 
 	# /servers/1
@@ -15,12 +15,22 @@ class ServersController < ApplicationController
 	def show
 		unless set_server
 			respond_to do |format|
-				format.html {redirect_to root_url, :flash => { :error => 'Server not found' } }
+				format.html {redirect_to root_url, :flash => {:error => 'Server not found' } }
 				format.json {render json: 'Server not found', status: :not_found}
 			end
 			return
 		end
-		@authorized = require_password
+		unless require_password
+			respond_to do |format|
+				format.html {redirect_to root_url, :flash => {:error => 'Incorrect server/password combination'} }
+				format.json {render json: 'Wrong password', status: :not_authorized}
+			end
+			return
+		end
+		respond_to do |format|
+			format.html {render}
+			format.json {render json: {name: @server.name, description: @server.description, ip: @server.recent_ip} }
+		end
 	end
 
 	# /update.json
@@ -62,7 +72,7 @@ class ServersController < ApplicationController
 	# GET /servers/1/edit
 	def edit
 		unless set_server
-			redirect_to :index, error: 'Server not found.'
+			redirect_to :index, :flash => {:error => 'Server not found.'}
 		end
 		@authorized = require_admin_password
 	end
@@ -70,13 +80,16 @@ class ServersController < ApplicationController
 	# PATCH/PUT /servers/1
 	def update
 		unless set_server
-			redirect_to :index, error: 'Server not found.'
+			redirect_to action: :index, :flash => {:error => 'Server not found.'}
+			return
 		end
 		unless require_admin_password
-			redirect_to :index, error: 'Password required.'
+			redirect_to action: :index, :flash => {:error => 'Password required.'}
+			return
 		end
 		if @server.update(server_params)
-			redirect_to @server, notice: 'Server was successfully updated.'
+			redirect_to "/server/#{@server.name}?password=#{@server.password}", notice: 'Server was successfully updated.'
+			return
 		else
 			render :edit
 		end
@@ -85,10 +98,12 @@ class ServersController < ApplicationController
 	# DELETE /servers/1
 	def destroy
 		unless set_server
-			redirect_to action: :index, :flash => {error: 'Server not found.'}
+			redirect_to action: :index, :flash => {:error => 'Server not found.'}
+			return
 		end
 		unless require_admin_password
-			redirect_to action: :index, :flash => {error: 'Password required.'}
+			render
+			return
 		end
 		@server.destroy
 		redirect_to servers_url, notice: 'Server was successfully destroyed.'
