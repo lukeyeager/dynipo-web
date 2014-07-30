@@ -40,15 +40,18 @@ class ServersController < ApplicationController
 			return
 		end
 		unless require_admin_password
-			render json: {error: 'Incorrect server/password combination'}, status: :not_authorized
+			render json: {error: 'Incorrect server/password combination'}, status: :forbidden
 			return
 		end
 
-		u = @server.updates.build(:ip_address => request.remote_ip)
+		ip = request.remote_ip
+		ip = '127.0.0.1' if ip == '::1' #Don't allow IPv6 formatted localhost
+
+		u = @server.updates.build(:ip_address => ip)
 		if u.save
 			render json: 'succeeded'
 		else
-			render json: @server.errors, status: :bad_request
+			render json: {error: 'Update could not be saved'}, status: :bad_request
 		end
 		return
 	end
