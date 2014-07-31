@@ -1,16 +1,16 @@
 <% @page_title = 'Dynamic IP Otter' -%>
 
-<div class="span6 offset3">
+<div class="span6 offset1">
 	<div class="well">
 
 		<%= form_tag '/server', method: 'get', class: 'form-horizontal' do |f| -%>
 			<div class="control-group">
 				<%= label_tag :name, 'Server Name', class: 'control-label' %>
-				<div class="controls"><%= text_field_tag :name %></div>
+				<div class="controls"><%= text_field_tag :name, nil, class: 'span12' %></div>
 			</div>
 			<div class="control-group">
 				<%= label_tag :password, 'Password', class: 'control-label' %>
-				<div class="controls"><%= text_field_tag :password %></div>
+				<div class="controls"><%= text_field_tag :password, nil, class: 'span12' %></div>
 			</div>
 			<div class="control-group">
 				<div class="controls"><%= submit_tag 'View', name: nil, class: 'btn btn-primary' %></div>
@@ -19,3 +19,9 @@
 
 	</div>
 </div>
+
+<div class="span3 offset1">
+	<div class="well">
+		<%= link_to 'New Server', new_server_path %>
+	</div>
+<div>

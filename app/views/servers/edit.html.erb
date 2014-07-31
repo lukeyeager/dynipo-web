@@ -9,13 +9,13 @@
 		<div class="control-group">
 			<%= label_tag :name, 'Server Name', class: 'control-label' %>
 			<div class="controls">
-				<%= text_field_tag nil, @server.name, disabled: true %>
+				<%= text_field_tag nil, @server.name, disabled: true, class: 'span12' %>
 			</div>
 		</div>
 		<div class="control-group">
 			<%= label_tag :password, 'Admin password', class: 'control-label' %>
 			<div class="controls">
-				<%= text_field_tag :password %>
+				<%= text_field_tag :password, nil, class: 'span12' %>
 			</div>
 		</div>
 		<div class="control-group">
@@ -45,19 +45,19 @@
 
 			<div class="control-group">
 				<%= f.label :name, class: 'control-label' %>
-				<div class="controls"><%= f.text_field :name %></div>
+				<div class="controls"><%= f.text_field :name, class: 'span12' %></div>
 			</div>
 			<div class="control-group">
 				<%= f.label :description, class: 'control-label' %>
-				<div class="controls"><%= f.text_field :description %></div>
+				<div class="controls"><%= f.text_field :description, class: 'span12' %></div>
 			</div>
 			<div class="control-group">
 				<%= f.label :password, class: 'control-label' %>
-				<div class="controls"><%= f.text_field :password %></div>
+				<div class="controls"><%= f.text_field :password, class: 'span12' %></div>
 			</div>
 			<div class="control-group">
 				<%= f.label :admin_password, class: 'control-label' %>
-				<div class="controls"><%= f.text_field :admin_password %></div>
+				<div class="controls"><%= f.text_field :admin_password, class: 'span12' %></div>
 			</div>
 			<div class="control-group">
 				<div class="controls">
