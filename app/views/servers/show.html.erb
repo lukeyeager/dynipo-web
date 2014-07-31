@@ -15,7 +15,7 @@
 
 		<strong>IP Addresses:</strong>
 		<% for u in @server.updates.sort_by{|u| u.created_at}.reverse -%>
-			<li><strong><%= u.ip_address %></strong> at <%= u.created_at %></li>
+			<li><strong><%= u.ip_address %></strong> for <%= u.duration %>, last updated <%= u.updated_at %></li>
 		<% end -%>
 
 	</div>

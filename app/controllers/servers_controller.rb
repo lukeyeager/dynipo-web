@@ -47,9 +47,22 @@ class ServersController < ApplicationController
 		ip = request.remote_ip
 		ip = '127.0.0.1' if ip == '::1' #Don't allow IPv6 formatted localhost
 
-		u = @server.updates.build(:ip_address => ip)
+		if last_update = @server.last_update
+			if last_update.ip_address == ip
+				# Previous IP is the same
+				last_update.touch
+				u = last_update
+			else
+				# Previous IP doesn't match
+				u = @server.updates.build(:ip_address => ip)
+			end
+		else
+			# First IP update
+			u = @server.updates.build(:ip_address => ip)
+		end
+
 		if u.save
-			render json: 'succeeded'
+			render json: 'IP Address updated'
 		else
 			render json: {error: 'Update could not be saved'}, status: :bad_request
 		end
