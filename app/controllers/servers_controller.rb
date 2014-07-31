@@ -29,7 +29,20 @@ class ServersController < ApplicationController
 		end
 		respond_to do |format|
 			format.html {render}
-			format.json {render json: {name: @server.name, description: @server.description, ip: @server.recent_ip} }
+			format.json {
+				res = {
+					name: @server.name,
+					description: @server.description,
+				}
+				if u = @server.last_update
+					res[:ip_address] = u.ip_address
+					res[:duration] = u.duration
+				else
+					res[:ip_address] = ''
+					res[:duration] = ''
+				end
+				render json: res
+			}
 		end
 	end
 
